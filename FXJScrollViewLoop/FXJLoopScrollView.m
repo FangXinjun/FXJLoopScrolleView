@@ -12,6 +12,7 @@
 #define ScrollViewHeight       self.scrollView.frame.size.height
 #define ScrollViewWith         self.scrollView.frame.size.width
 #define KAnimateViewWidth      10
+#define pageControlBottomSpacing 25
 
 
 @interface FXJLoopScrollView ()<UIScrollViewDelegate>
@@ -215,7 +216,8 @@
 - (void)setPageControlPosition {
     
     if (_pageControlPosition == PageControlPositionHide) {
-        [self.pageControl removeFromSuperview];
+//        [self.pageControl removeFromSuperview];
+        self.pageControl.hidden = YES;
         return;
     }    
     CGSize size;
@@ -228,32 +230,22 @@
     _pageControl.frame = CGRectMake(0, 0, size.width, size.height);
     
     if (_pageControlPosition == PageControlPositionNone || _pageControlPosition == PageControlPositionBottomCenter){
-        _pageControl.center = CGPointMake(ScrollViewWith * 0.5, ScrollViewHeight - (_titleLabel.hidden? 10 : 30));
+        _pageControl.center = CGPointMake(ScrollViewWith * 0.5, ScrollViewHeight - (_titleLabel.hidden ? 10 + size.height/2 : 10 + size.height/2 + _titleLabel.frame.size.height + 5));
     }
     else if (_pageControlPosition == PageControlPositionTopCenter){
-        _pageControl.center = CGPointMake(ScrollViewWith * 0.5, size.height * 0.5);
+        _pageControl.center = CGPointMake(ScrollViewWith * 0.5, size.height * 0.5 + 10);
     }
     else if (_pageControlPosition == PageControlPositionBottomLeft){
-        _pageControl.frame = CGRectMake(Spacing, ScrollViewHeight - (_titleLabel.hidden? size.height : size.height + 20), size.width, size.height);
+        _pageControl.frame = CGRectMake(Spacing, ScrollViewHeight - (_titleLabel.hidden? size.height + 10 : size.height + _titleLabel.frame.size.height + 10 + 5), size.width, size.height);
     }
-    else{
-        _pageControl.frame = CGRectMake(ScrollViewWith - Spacing - size.width, ScrollViewHeight - (_titleLabel.hidden? size.height : size.height + 20), size.width, size.height);
+    else if (_pageControlPosition == PageControlPositionBottomRight){
+        _pageControl.frame = CGRectMake(ScrollViewWith - Spacing - size.width, ScrollViewHeight - (_titleLabel.hidden ? size.height + 10 : size.height + _titleLabel.frame.size.height + 10 + 5), size.width, size.height);
     }
 
 }
 // 设置圆圈的frame
 - (void)setPageControlPosition:(PageControlPosition)pageControlPosition{
     _pageControlPosition = pageControlPosition;
-    if (self.pageStyle == PageContolStyleAnimated) {
-        for (int a = 0; a < self.animaateViewsArray.count; a++) {
-            UIView *dot = self.animaateViewsArray[a];
-            [self updateDotFrame:dot atIndex:a];
-        }
-    }else {
-    
-    
-    }
-
 }
 
 #pragma mark 图片下载
@@ -320,12 +312,25 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     _scrollView.frame = self.bounds;
-    _titleLabel.frame = CGRectMake(0, ScrollViewHeight - 20, ScrollViewWith, 20);
-    [self setPageControlPosition];
+    if (_titleArray.count > 0 && _titleLabel.hidden == NO) {
+        CGFloat height = [self stringHeightWithString:_titleArray[0] fontFloat:_titleFont];
+        _titleLabel.frame = CGRectMake(0, ScrollViewHeight - height - 10, ScrollViewWith, height);
+    }
+    if (self.pageStyle == PageContolStyleAnimated) {
+        [self resetAnimationViewFrame];
+    }else{
+        [self setPageControlPosition];
+    }
     [self setScrollViewContentSize];
 }
 
-
+- (CGFloat)stringHeightWithString:(NSString *)str fontFloat:(UIFont *)font
+{
+    return [str boundingRectWithSize:CGSizeMake(ScrollViewWith - 34, CGFLOAT_MAX)
+                             options:NSStringDrawingUsesLineFragmentOrigin
+                          attributes:@{NSFontAttributeName : font}
+                             context:nil].size.height;
+}
 #pragma mark UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGFloat offsetX = scrollView.contentOffset.x;
@@ -427,7 +432,6 @@
         UIView *dot = [self generateDotView];
         dot.tag = a+1;
         [self.animaateViewsArray addObject:dot];
-        [self updateDotFrame:dot atIndex:a];
     }
     FXJAnimateView *firestView = [self.animaateViewsArray firstObject];
     [firestView changeActivityState:YES];
@@ -451,7 +455,7 @@
 {
     if (_pageControlPosition == PageControlPositionHide) {
         for (UIView *view in self.animaateViewsArray) {
-            [view removeFromSuperview];
+            view.hidden = YES;
         }
         return;
     }
@@ -460,26 +464,32 @@
     CGFloat beginY = 0;
     if (_pageControlPosition == PageControlPositionNone || _pageControlPosition == PageControlPositionBottomCenter){
         beginX = (self.frame.size.width - ((KAnimateViewWidth + Spacing) * self.imageArray.count))/2;
-        beginY = self.frame.size.height - (_titleLabel.hidden ? 30 : _titleLabel.frame.size.height + 30);
+        beginY = self.frame.size.height - (_titleLabel.hidden ? pageControlBottomSpacing : _titleLabel.frame.size.height + pageControlBottomSpacing);
     }
     else if (_pageControlPosition == PageControlPositionTopCenter){
         beginX = (self.frame.size.width - ((KAnimateViewWidth + Spacing) * self.imageArray.count))/2;
-        
+        beginY = pageControlBottomSpacing - KAnimateViewWidth;
     }
     else if (_pageControlPosition == PageControlPositionBottomLeft){
         beginX = Spacing;
-        beginY = self.frame.size.height - (_titleLabel.hidden ? 30 : _titleLabel.frame.size.height + 30);
+        beginY = self.frame.size.height - (_titleLabel.hidden ? pageControlBottomSpacing : _titleLabel.frame.size.height + pageControlBottomSpacing);
     }
     else if (_pageControlPosition == PageControlPositionBottomRight){
         beginX = (self.frame.size.width - ((KAnimateViewWidth + Spacing) * self.imageArray.count));
-        beginY = self.frame.size.height - (_titleLabel.hidden ? 30 : _titleLabel.frame.size.height + 30);
+        beginY = self.frame.size.height - (_titleLabel.hidden ? pageControlBottomSpacing : _titleLabel.frame.size.height + pageControlBottomSpacing);
     }
     
     CGFloat x = (KAnimateViewWidth + Spacing) * index + beginX;
     dot.frame = CGRectMake(x, beginY, KAnimateViewWidth, KAnimateViewWidth);
 
 }
-
+// 重置frame
+- (void)resetAnimationViewFrame{
+    for (int a = 0; a < self.animaateViewsArray.count; a++) {
+        UIView *dot = self.animaateViewsArray[a];
+        [self updateDotFrame:dot atIndex:a];
+    }
+}
 #pragma mark  懒加载
 - (NSMutableArray *)animaateViewsArray{
     if (!_animaateViewsArray) {
