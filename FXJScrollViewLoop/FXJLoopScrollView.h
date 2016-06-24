@@ -11,13 +11,11 @@
 /** pageControl样式 */
 typedef NS_ENUM(NSUInteger, PageContolStyle)
 {
-    /** 默认 */
-    PageContolStyleNormal = 0,
-    /** 圆形背景 */
-    PageContolStyleAnimated,
+    PageContolStyleNormal = 0, // 默认
+    PageContolStyleAnimated,   // 圆形背景
 };
 
-//pageControl的显示位置
+/** pageControl的显示位置 */
 typedef NS_ENUM(NSUInteger, PageControlPosition)
 {
     PageControlPositionNone,           //默认值PositionBottomCenter
