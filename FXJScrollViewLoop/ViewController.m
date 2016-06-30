@@ -33,7 +33,7 @@
         NSLog(@"%zd",index);
     }];
 
-//    [self.ScrollView setPageImage:[UIImage imageNamed:@"pagImage"] andCurrentImage:[UIImage imageNamed:@"currentImage"]];
+    [self.ScrollView setPageImage:[UIImage imageNamed:@"pagImage"] andCurrentImage:[UIImage imageNamed:@"currentImage"]];
 
     [self.ScrollView setPageColor:[UIColor purpleColor] andCurrentPageColor:[UIColor orangeColor]];
     
@@ -45,9 +45,13 @@
     
 //    self.ScrollView.pageStyle = PageContolStyleAnimated;
     
-    self.ScrollView.titleIsHiden = YES;
+//    self.ScrollView.titleIsHiden = YES;
 
-    self.ScrollView.pageControlPosition = PageControlPositionBottomCenter;
+//    self.ScrollView.pageControlPosition = PageControlPositionBottomCenter;
+    
+//    self.ScrollView.imageArray = imageArray;
+//    
+//    self.ScrollView.titleArray = titleArray;
     
     [self.view addSubview:_ScrollView];
     

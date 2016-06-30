@@ -63,7 +63,7 @@
     }
 }
 
-- (instancetype)initWithFrame:(CGRect)frame imageArray:(NSArray *)imageArray titleArray:(NSArray *)titleArray placeholderImage:(UIImage *)placeholderImage{
+- (instancetype)initWithFrame:(CGRect)frame imageArray:(NSArray *)imageArray titleArray:(NSArray<NSString *> *)titleArray placeholderImage:(UIImage *)placeholderImage{
     if (self = [super initWithFrame:frame]) {
         self.placeholderImage = placeholderImage;
         self.imageArray = imageArray;
@@ -78,21 +78,6 @@
 + (instancetype)loopScrollViewWithFrame:(CGRect)frame imageArray:(NSArray *)imageArray titleArray:(NSArray *)titleArray placeholderImage:(UIImage *)placeholderImage{
     return [[FXJLoopScrollView alloc] initWithFrame:frame imageArray:imageArray titleArray:titleArray placeholderImage:placeholderImage];
 }
-//- (instancetype)initWithFrame:(CGRect)frame imageArray:(NSArray *)imageArray titleArray:(NSArray *)titleArray placeholderImage:(UIImage *)placeholderImage downloadImagesBlock:(DownloadImagesBlock)downloadImagesBlock{
-//
-//    if (self = [super initWithFrame:frame]) {
-//        self.downloadImagesBlock = downloadImagesBlock;
-//        self.placeholderImage = placeholderImage;
-//        self.imageArray = imageArray;
-//        self.titleArray = titleArray;
-//        [self addSubview:self.scrollView];
-//        [self addSubview:self.titleLabel];
-//        [self addSubview:self.pageControl];
-//    }
-//    
-//    return self;
-//
-//}
 
 #pragma mark 设置相关
 -(void)setClickImageViewBlock:(void (^)(NSInteger))ClickImageViewBlock{
@@ -115,7 +100,7 @@
 
 - (void)setTitleArray:(NSArray *)titleArray{
     _titleArray = titleArray;
-    if (titleArray.count <= 0 ) {
+    if (titleArray.count <= 0 || self.imageArray.count <= 0) {
         self.titleLabel.hidden = YES;
         return;
     }
@@ -137,7 +122,6 @@
     [self clearDiskCache];
     if (!imageArray.count) return;  // 不存在就返回
     _imageArray = imageArray;
-    
     _images = [NSMutableArray array];
     
     for (int i = 0; i < imageArray.count; i++) {
@@ -252,15 +236,6 @@
 - (void)downloadImages:(int)index {
     
     NSString *key = _imageArray[index];
-//    if (_downloadImagesBlock) { // 用户自己实现了图片下载的代码方法
-//        UIImage *image = _downloadImagesBlock(key);
-//        if (image) {
-//            self.images[index] = image;
-//            if (_currIndex == index) {
-//                [_currImageView performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
-//            }
-//        }
-//    }else
     { // 图片下载加本地缓存
     
         NSString *path = [[[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"FXJCarousel"] stringByAppendingPathComponent:[key lastPathComponent]];

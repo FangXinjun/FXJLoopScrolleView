@@ -55,7 +55,7 @@ typedef UIImage*(^DownloadImagesBlock)(NSString *urlStr);
  *  @param placeholderImage 下载的占位图
  *
  */
-- (instancetype)initWithFrame:(CGRect)frame imageArray:(NSArray *)imageArray titleArray:(NSArray *)titleArray placeholderImage:(UIImage *)placeholderImage;
+- (instancetype)initWithFrame:(CGRect)frame imageArray:(NSArray *)imageArray titleArray:(NSArray<NSString *> *)titleArray placeholderImage:(UIImage *)placeholderImage;
 + (instancetype)loopScrollViewWithFrame:(CGRect)frame imageArray:(NSArray *)imageArray titleArray:(NSArray *)titleArray placeholderImage:(UIImage *)placeholderImage;
 
 /**
